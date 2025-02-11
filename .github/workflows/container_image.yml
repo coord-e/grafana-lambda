@@ -1,0 +1,35 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  container_image:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_REPOSITORY: 389602053363.dkr.ecr.ap-northeast-1.amazonaws.com/grafana-lambda
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::389602053363:role/actions/GrafanaDeployment
+          aws-region: ap-northeast-1
+      - uses: aws-actions/amazon-ecr-login@v2
+      - id: get-base-tag
+        shell: bash
+        run: |
+          from_line=$(grep 'FROM docker.io/grafana/grafana' < Dockerfile)
+          echo "::set-output name=base-tag::${from_line##*:}"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.IMAGE_REPOSITORY }}:latest,${{ env.IMAGE_REPOSITORY }}:${{ steps.get-base-tag.outputs.base-tag }}
+          provenance: false
