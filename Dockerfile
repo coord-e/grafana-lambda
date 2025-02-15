@@ -9,6 +9,7 @@ USER root
 RUN apk add --no-cache aws-cli
 
 USER grafana
+RUN grafana cli plugins install grafana-amazonprometheus-datasource 2.0.0
 
 COPY ./lambda_entrypoint.sh /lambda_entrypoint.sh
 ENTRYPOINT ["/lambda_entrypoint.sh"]
