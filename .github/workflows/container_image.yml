@@ -24,7 +24,7 @@ jobs:
           from_line=$(grep 'FROM docker.io/grafana/grafana' < Dockerfile)
           echo "::set-output name=base-tag::${from_line##*:}"
       - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: .
           cache-from: type=gha
