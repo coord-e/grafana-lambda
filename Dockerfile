@@ -1,4 +1,4 @@
-FROM docker.io/grafana/grafana:12.0.1
+FROM docker.io/grafana/grafana:13.1.0
 
 COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter
 COPY --from=ghcr.io/coord-e/lambda-metrics-forwarder-extension:1 /lambda-metrics-forwarder /opt/extensions/
